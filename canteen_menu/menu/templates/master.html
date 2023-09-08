@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .top-bar {
+        background-color: darkblue;
+        margin: 0;
+        padding: 5px;
+        color: white;
+        width: 100%;
+    }
+
+    .fixed {
+        position: fixed;
+    }
+
+    div {
+      font-size: 48px;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+    }
+    body {
+        margin: 0;
+    }
+    .content {
+      padding: 20px;
+      padding-top: 20px;
+    }
+    .meal {
+      margin-top: 20px;
+      border: solid;
+      border-width: 5px;
+      border-color: darkblue;
+      border-radius: 100px;
+      padding: 40px;
+    }
+
+    .logo {
+        color: white;
+        margin-left: 15px;
+    }
+
+    input {
+      font-size: 48px;
+      height: 60px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="top-bar fixed">
+    <h1 style="text-align: left;"><a href="/" class="logo">LICEJUS</a></h1>
+  </div>
+  <div class="top-bar">
+    <h1><a href="/" class="logo">LICEJUS</a></h1>
+  </div>
+  <div class="content">
+  {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Meniu
+{% endblock %}
+
+
+{% block content %}
+    {% load static %}
+    <h1>{{ meal.name }}</h1>
+    <b>Aprašymas <br/></b>
+    <p>{{ meal.description }}</p>
+    <b>Kaina: {{ meal.price }}€</b>
+    <h2>Komentarai</h2>
+    <input type="text">
+    <input type="submit">
+{% endblock %}

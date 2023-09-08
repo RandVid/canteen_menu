@@ -1,0 +1,17 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Meniu
+{% endblock %}
+
+
+{% block content %}
+{% load static %}
+  <h1>Patiekalai</h1>
+
+    {% for x in meals %}
+      <a href="details/{{ x.id }}">
+        <div class="meal"> {{ x.name }} {{ x.price }} </div>
+      </a>
+    {% endfor %}
+{% endblock %}
