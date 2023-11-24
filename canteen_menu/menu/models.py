@@ -14,8 +14,15 @@ class Meal(models.Model):
 
 class Comment(models.Model):
     meal_id = models.IntegerField()
-    user_id = models.IntegerField()
-    description = models.TextField()
+    username = models.CharField(max_length=150)
+    description = models.TextField(null=True)
+    rating = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"{self.meal_id}  {self.user_id}"
+        return f"{self.meal_id}  {self.username}"
+
+
+class FavoriteMeal(models.Model):
+    meal_id = models.IntegerField()
+    username = models.CharField(max_length=150)

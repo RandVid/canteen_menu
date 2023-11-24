@@ -1,6 +1,7 @@
 {% extends "master.html" %}
 
 {% block title %}
+    {% load crispy_forms_tags %}
   Meniu
 {% endblock %}
 
@@ -12,6 +13,23 @@
     <p>{{ meal.description }}</p>
     <b>Kaina: {{ meal.price }}€</b>
     <h2>Komentarai</h2>
-    <input type="text">
-    <input type="submit">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          {{ form|crispy }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <strong>{{ comment.username }}</strong>
+                <p>{{ comment.description }}</p>
+                <small>{{ comment.created_at }}</small>
+            </li>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}

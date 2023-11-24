@@ -9,9 +9,63 @@
 {% load static %}
   <h1>Patiekalai</h1>
 
-    {% for x in meals %}
-      <a href="details/{{ x.id }}">
-        <div class="meal"> {{ x.name }} {{ x.price }} </div>
-      </a>
-    {% endfor %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('.task-checkbox').on('change', function () {
+          var taskId = $(this).data('task-id');
+          $.ajax({
+            url: '/favorite/update/' + taskId + '/',
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+            },
+            success: function (data) {
+              if (data.status === 'success') {
+                console.log('Task updated successfully');
+              } else {
+                console.error('Error updating task');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX request failed with error: ' + error);
+            }
+          });
+        });
+      });
+    </script>
+
+    <div class="container mt-4">
+      <div class="row">
+        {% for x in meals %}
+          <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card">
+              <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
+              <div class="card-body">
+                <h2 class="card-title">{{ x.name }}</h2>
+                <p class="card-text">Some example text.</p>
+                <div class="row">
+                {% if user.is_authenticated %}
+                  <div class="col-7">
+                    <h2 class="card-text">{{ x.price }}€</h2>
+                  </div>
+                  <div class="col-1 text-right">
+                    <input type="checkbox" class="task-checkbox" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
+                  </div>
+                {% else %}
+                  <div class="col-8">
+                    <h2 class="card-text">{{ x.price }}€</h2>
+                  </div>
+                {% endif %}
+                <div class="col-4 text-right">
+                  <a href="details/{{ x.id }}" class="btn btn-primary">See More</a>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+</div>
 {% endblock %}
