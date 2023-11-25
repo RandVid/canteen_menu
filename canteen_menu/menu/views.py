@@ -9,12 +9,12 @@ from .forms import CommentForm
 # Create your views here.
 def main(request):
     meals = Meal.objects.filter(in_menu=True).values()
-    favorite_meals = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
-    print(favorite_meals)
+    favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
+    print(favorite)
     template = loader.get_template('main.html')
     context = {
         'meals': meals,
-        'favorite_meals': favorite_meals
+        'favorite_meals': favorite
     }
     return HttpResponse(template.render(context, request))
 
@@ -38,6 +38,19 @@ def details(request, id):
         'meal': meal,
         'comments': comments,
         'form': form
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def favorite_meals(request):
+    favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
+    in_menu = Meal.objects.filter(in_menu=True, id__in=favorite).values()
+    not_in_menu = Meal.objects.filter(in_menu=False, id__in=favorite).values()
+    template = loader.get_template('favorite_meals.html')
+    context = {
+        'favorite_meals': favorite,
+        'favorite_in_menu': in_menu,
+        'favorite_not_in_menu': not_in_menu
     }
     return HttpResponse(template.render(context, request))
 
