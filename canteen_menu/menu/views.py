@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
-from menu.models import Meal, Comment, FavoriteMeal
+from .models import Meal, Comment, FavoriteMeal
 from .forms import CommentForm
 
 
