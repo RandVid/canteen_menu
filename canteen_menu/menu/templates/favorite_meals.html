@@ -8,37 +8,10 @@
 {% block content %}
     {% load static %}
     <h1>Mėgstamiausi Patiekalai</h1>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $('.task-checkbox').on('change', function () {
-          var taskId = $(this).data('task-id');
-          $.ajax({
-            url: '/favorite/update/' + taskId + '/',
-            type: 'POST',
-            dataType: 'json',
-            beforeSend: function (xhr) {
-              xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-            },
-            success: function (data) {
-              if (data.status === 'success') {
-                console.log('Task updated successfully');
-              } else {
-                console.error('Error updating task');
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX request failed with error: ' + error);
-            }
-          });
-        });
-      });
-    </script>
-
-    {% if favorite_in_menu %}<h2 class="text-center text-success">Yra Meniuje</h2>{% endif %}
+    {% if favorite_in_menu %}<h2 class="text-center text-success">Yra Meniu</h2>{% endif %}
     {% include "meals.html" with meals=favorite_in_menu %}
 
-    {% if favorite_not_in_menu %}<h2 class="text-center text-danger">Nėra Meniuje</h2>{% endif %}
+    {% if favorite_not_in_menu %}<h2 class="text-center text-danger">Nėra Meniu</h2>{% endif %}
     {% include "meals.html" with meals=favorite_not_in_menu button_color='btn-secondary' text_color='text-secondary'%}
 
 {% endblock %}

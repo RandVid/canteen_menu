@@ -29,11 +29,13 @@
       <div class="row d-flex align-items-center justify-content-center">
         {% for x in meals %}
           <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card {% if text_color %} {{ text_color }} {% endif %}">
+            <div class="card {% if text_color %} {{ text_color }} {% endif %} ratio-16X9">
               <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
-              <div class="card-body">
+              <div class="card-header">
                 <h2 class="card-title">{{ x.name }}</h2>
-                <p class="card-text">Some example text.</p>
+              </div>
+              <div class="card-body">
+                <p class="card-text">{{ x.description }}</p>
                 <div class="row align-items-center d-flex">
                 {% if user.is_authenticated %}
                   <div class="col-7">

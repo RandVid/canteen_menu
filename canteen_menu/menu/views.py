@@ -5,6 +5,8 @@ from django.template import loader
 from .models import Meal, Comment, FavoriteMeal
 from .forms import CommentForm
 
+from unidecode import unidecode
+
 
 # Create your views here.
 def main(request):
@@ -16,6 +18,8 @@ def main(request):
         'meals': meals,
         'favorite_meals': favorite
     }
+    print(Meal.objects.filter(name__icontains=""))
+    accent_insensitive_search(Meal, "Salt")
     return HttpResponse(template.render(context, request))
 
 
@@ -67,3 +71,41 @@ def update_favorite(request, meal_id):
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
+
+
+def accent_insensitive_search(model, text):
+    names = list(model.objects.values_list('name', flat=True))
+    good_names = [name for name in names if unidecode(text.lower()) in unidecode(name.lower())] 
+    print(good_names, unidecode(text.lower()))
+
+
+def levenshtein_distance(str1, str2):
+    m, n = len(str1), len(str2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0:
+                dp[i][j] = j
+            elif j == 0:
+                dp[i][j] = i
+            elif str1[i - 1] == str2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j],      # deletion
+                                  dp[i][j - 1],      # insertion
+                                  dp[i - 1][j - 1])  # substitution
+
+    return dp[m][n]
+
+
+def typo_tolerant_search(query, word_list, tolerance=2):
+    results = []
+
+    for word in word_list:
+        distance = levenshtein_distance(query, word) - len(word) + len(query)
+        if distance <= tolerance:
+            results.append((word, distance))
+
+    results.sort(key=lambda x: x[1])  # Sort results by distance
+    return results
