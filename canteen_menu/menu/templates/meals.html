@@ -34,10 +34,10 @@
               <div class="card-header">
                 <h2 class="card-title">{{ x.name }}</h2>
               </div>
-              <div class="card-body pt-1">
+              <div class="card-body pt-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 {% if x.is_vegan %}<span class="badge bg-success">Vegan</span>{% endif %}
 <!--                <span class="badge"> </span>-->
-                <p class="card-text">{{ x.description }}</p>
+                <div style="overflow: hidden; text-overflow: ellipsis;"><p class="card-text" >{{ x.description }}</p></div>
                 <div class="row align-items-center d-flex" style="position: absolute; width: 100%; bottom: 10px;">
                 {% if user.is_authenticated %}
                   <div class="col-7">

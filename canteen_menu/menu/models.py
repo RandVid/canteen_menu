@@ -32,3 +32,7 @@ class Comment(models.Model):
 class FavoriteMeal(models.Model):
     meal_id = models.IntegerField()
     username = models.CharField(max_length=150)
+
+
+class MealCategory(models.Model):
+    name = models.CharField(max_length=150)

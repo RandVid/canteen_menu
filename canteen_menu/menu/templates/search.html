@@ -1,0 +1,62 @@
+<script>
+    $(document).ready(function() {
+        $('#input_value').on('input', function() {
+            // Get the value of the text input
+            var inputValue = $(this).val();
+
+            // Send a POST request to your Django view
+            $.ajax({
+                type: 'POST',
+                url: '/',
+                data: {
+                    'input_value': inputValue,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}', // Include CSRF token for security
+                },
+                success: function(response) {
+                    // Handle the response from the server if needed
+                    console.log(response);
+                },
+                error: function(error) {
+                    // Handle errors if any
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" id="input_value">
+                </div>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-bs-toggle="dropdown">
+                  Daugiau
+                </button>
+                <div class="dropdown-menu w-100">
+                  <div class="row d-flex align-items-center justify-content-center">
+                    <div class="row">
+                      <div class="col">
+                         <div class="form-check">
+                             <div class="form-check">
+                                 <input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" checked>
+                                 <label class="form-check-label">Option 1</label>
+                             </div>
+                         </div>
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Ieškoti" id="asaa">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </form>
+    </div>
+
+</div>

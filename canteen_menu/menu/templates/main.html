@@ -8,9 +8,6 @@
 {% block content %}
 {% load static %}
   <h1>Patiekalai</h1>
+  {% include "search.html" with meals=meals %}
   {% include "meals.html" with meals=meals %}
-  <div class="container mt-4">
-        <div class="row d-flex align-items-center justify-content-center">
-        </div>
-  </div>
 {% endblock %}

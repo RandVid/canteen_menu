@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
-from .models import Meal, Comment, FavoriteMeal
+from .models import Meal, Comment, FavoriteMeal, MealCategory
 from .forms import CommentForm
 
 from unidecode import unidecode
@@ -10,13 +10,17 @@ from unidecode import unidecode
 
 # Create your views here.
 def main(request):
+    if request.method == "POST":
+        input_value = request.POST.get('input_value')
+        print(input_value)
     meals = Meal.objects.filter(in_menu=True).values()
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
     print(favorite)
     template = loader.get_template('main.html')
     context = {
         'meals': meals,
-        'favorite_meals': favorite
+        'favorite_meals': favorite,
+        'categories': MealCategory.objects.all().values()
     }
     print(Meal.objects.filter(name__icontains=""))
     accent_insensitive_search(Meal, "Salt")
