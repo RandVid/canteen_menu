@@ -17,13 +17,14 @@ def main(request):
     categories = MealCategory.objects.all().values()
     if request.method == "POST":
         input_value = request.POST.get('input_value')
+        print(input_value)
         meals = meal_search(meals, input_value)
         is_authenticated = request.user.is_authenticated
         meals_html = loader.render_to_string('meals.html', {'meals': meals,
                                                             'is_authenticated': is_authenticated,
                                                             'favorite_meals': favorite,
                                                             'csrf_token': get_token(request)})
-        return JsonResponse({'status': 'success', 'meals': meals_html})
+        return JsonResponse({'status': 'success', 'meals1': meals_html})
 
     template = loader.get_template('main.html')
     context = {
