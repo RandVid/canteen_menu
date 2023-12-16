@@ -4,26 +4,27 @@ from django.template import loader
 
 from .models import Meal, Comment, FavoriteMeal, MealCategory
 from .forms import CommentForm
+from .templatetags.custom_filters import get_category_name
 
 from unidecode import unidecode
 
 
 # Create your views here.
 def main(request):
+    meals = Meal.objects.filter(in_menu=True).values()
     if request.method == "POST":
         input_value = request.POST.get('input_value')
-        print(input_value)
-    meals = Meal.objects.filter(in_menu=True).values()
+        meals = meal_search(meals, input_value)
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
-    print(favorite)
+    categories = MealCategory.objects.all().values()
+    # print(meals[0]["category_id"])
+    print(get_category_name(categories, meals[1]["category_id"]))
     template = loader.get_template('main.html')
     context = {
         'meals': meals,
         'favorite_meals': favorite,
-        'categories': MealCategory.objects.all().values()
+        'categories': categories
     }
-    print(Meal.objects.filter(name__icontains=""))
-    accent_insensitive_search(Meal, "Salt")
     return HttpResponse(template.render(context, request))
 
 
@@ -77,10 +78,16 @@ def update_favorite(request, meal_id):
         return JsonResponse({'status': 'error'})
 
 
-def accent_insensitive_search(model, text):
-    names = list(model.objects.values_list('name', flat=True))
-    good_names = [name for name in names if unidecode(text.lower()) in unidecode(name.lower())] 
-    print(good_names, unidecode(text.lower()))
+def meal_search(meal_set, query):
+    names = list(meal_set.values_list('name', flat=True))
+    good_names = accent_insensitive_search(names, query)
+    suited_meal_list = meal_set.filter(name__in=good_names)
+    return suited_meal_list
+
+
+def accent_insensitive_search(names, query):
+    good_names = [name for name in names if unidecode(query.lower()) in unidecode(name.lower())]
+    return good_names
 
 
 def levenshtein_distance(str1, str2):
@@ -107,7 +114,7 @@ def typo_tolerant_search(query, word_list, tolerance=2):
     results = []
 
     for word in word_list:
-        distance = levenshtein_distance(query, word) - len(word) + len(query)
+        distance = levenshtein_distance(unidecode(query.lower()), unidecode(word.lower())) - len(word) + len(query)
         if distance <= tolerance:
             results.append((word, distance))
 
