@@ -1,3 +1,4 @@
+from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
@@ -12,13 +13,18 @@ from unidecode import unidecode
 # Create your views here.
 def main(request):
     meals = Meal.objects.filter(in_menu=True).values()
+    favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
+    categories = MealCategory.objects.all().values()
     if request.method == "POST":
         input_value = request.POST.get('input_value')
         meals = meal_search(meals, input_value)
-    favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
-    categories = MealCategory.objects.all().values()
-    # print(meals[0]["category_id"])
-    print(get_category_name(categories, meals[1]["category_id"]))
+        is_authenticated = request.user.is_authenticated
+        meals_html = loader.render_to_string('meals.html', {'meals': meals,
+                                                            'is_authenticated': is_authenticated,
+                                                            'favorite_meals': favorite,
+                                                            'csrf_token': get_token(request)})
+        return JsonResponse({'status': 'success', 'meals': meals_html})
+
     template = loader.get_template('main.html')
     context = {
         'meals': meals,
@@ -72,7 +78,6 @@ def update_favorite(request, meal_id):
         else:
             favorite_meal = FavoriteMeal(meal_id=meal_id, username=request.user)
             favorite_meal.save()
-        print(FavoriteMeal.objects.all().values())
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})

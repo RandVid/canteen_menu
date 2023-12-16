@@ -53,13 +53,13 @@
                     'input_value': inputValue,
                     'csrfmiddlewaretoken': '{{ csrf_token }}', // Include CSRF token for security
                 },
-                success: function(response) {
+                success: function(data) {
                     // Handle the response from the server if needed
-                    console.log("nice");
+                    $('#meals-container').html(data.meals);
                 },
                 error: function(error) {
-                    // Handle errors if any
-                    console.log(error);
+                    // Update the content on success
+                    console.log("aboba")
                 }
             });
         });

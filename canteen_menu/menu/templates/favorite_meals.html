@@ -9,9 +9,9 @@
     {% load static %}
     <h1>Mėgstamiausi Patiekalai</h1>
     {% if favorite_in_menu %}<h2 class="text-center text-success">Yra Meniu</h2>{% endif %}
-    {% include "meals.html" with meals=favorite_in_menu %}
+    {% include "meals.html" with meals=favorite_in_menu is_authenticated=user.is_authenticated %}
 
     {% if favorite_not_in_menu %}<h2 class="text-center text-danger">Nėra Meniu</h2>{% endif %}
-    {% include "meals.html" with meals=favorite_not_in_menu button_color='btn-secondary' text_color='text-secondary'%}
+    {% include "meals.html" with meals=favorite_not_in_menu button_color='btn-secondary' text_color='text-secondary' is_authenticated=user.is_authenticated %}
 
 {% endblock %}

@@ -9,5 +9,5 @@
 {% load static %}
   <h1>Patiekalai</h1>
   {% include "search.html" with categories=categories %}
-  {% include "meals.html" with meals=meals categories=categories %}
+  <div id="meals-container">{% include "meals.html" with meals=meals is_authenticated=user.is_authenticated %}</div>
 {% endblock %}

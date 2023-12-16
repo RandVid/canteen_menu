@@ -2,7 +2,7 @@ from django.db import models
 
 
 class MealCategory(models.Model):
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique="True")
 
     def __str__(self):
         return self.name
@@ -20,7 +20,7 @@ class Meal(models.Model):
     fats = models.IntegerField(null=True, blank=True)
     carbohydrates = models.IntegerField(null=True, blank=True)
     mass = models.IntegerField(null=True, blank=True)
-    category = models.ForeignKey(MealCategory, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(MealCategory, on_delete=models.CASCADE, to_field="name", null=True)
 
     def __str__(self):
         return f"{self.name}"
