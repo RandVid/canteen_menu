@@ -8,6 +8,6 @@
 {% block content %}
 {% load static %}
   <h1>Patiekalai</h1>
-  {% include "search.html" with meals=meals %}
-  {% include "meals.html" with meals=meals %}
+  {% include "search.html" with categories=categories %}
+  {% include "meals.html" with meals=meals categories=categories %}
 {% endblock %}

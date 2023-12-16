@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
       $(document).ready(function () {
@@ -12,7 +14,7 @@
             },
             success: function (data) {
               if (data.status === 'success') {
-                console.log('Task updated successfully');
+                console.log('Favorite meal updated');
               } else {
                 console.error('Error updating task');
               }
@@ -35,6 +37,7 @@
                 <h2 class="card-title">{{ x.name }}</h2>
               </div>
               <div class="card-body pt-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span class="badge bg-primary"></span>
                 {% if x.is_vegan %}<span class="badge bg-success">Vegan</span>{% endif %}
 <!--                <span class="badge"> </span>-->
                 <div style="overflow: hidden; text-overflow: ellipsis;"><p class="card-text" >{{ x.description }}</p></div>

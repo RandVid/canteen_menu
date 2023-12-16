@@ -1,3 +1,44 @@
+
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" id="input_value">
+                </div>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm py-0" data-bs-toggle="dropdown">
+                  Daugiau
+                </button>
+                <div class="dropdown-menu w-100">
+                  <div class="row d-flex align-items-center justify-content-center">
+                    <div class="row">
+                      <div class="col">
+                         <div class="form-check">
+                             {% for x in categories %}
+                                 <input class="form-check-input" type="checkbox" id="{{ x.id }}" name="option1" value="something" checked>
+                                 <label class="form-check-label">{{ x.name }}</label>
+                                 <br/>
+                             {% endfor %}
+                         </div>
+                         <div class="form-check mt-2">
+                             <input class="form-check-input" type="checkbox" id="is-vegan" name="option1" value="something">
+                             <label class="form-check-label">Vegan</label>
+                         </div>
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Ieškoti" id="asaa">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </form>
+    </div>
+
+</div>
 <script>
     $(document).ready(function() {
         $('#input_value').on('input', function() {
@@ -14,7 +55,7 @@
                 },
                 success: function(response) {
                     // Handle the response from the server if needed
-                    console.log(response);
+                    console.log("nice");
                 },
                 error: function(error) {
                     // Handle errors if any
@@ -24,39 +65,3 @@
         });
     });
 </script>
-
-<div class="container mt-4">
-    <div class="row d-flex align-items-center justify-content-center">
-        <form method="post">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col">
-                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" id="input_value">
-                </div>
-            </div>
-            <div class="dropdown">
-                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-bs-toggle="dropdown">
-                  Daugiau
-                </button>
-                <div class="dropdown-menu w-100">
-                  <div class="row d-flex align-items-center justify-content-center">
-                    <div class="row">
-                      <div class="col">
-                         <div class="form-check">
-                             <div class="form-check">
-                                 <input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" checked>
-                                 <label class="form-check-label">Option 1</label>
-                             </div>
-                         </div>
-                      </div>
-                      <div class="col">
-                        <input type="text" class="form-control" placeholder="Ieškoti" id="asaa">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-        </form>
-    </div>
-
-</div>
