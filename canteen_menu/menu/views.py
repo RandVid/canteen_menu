@@ -16,8 +16,11 @@ def main(request):
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
     categories = MealCategory.objects.all().values()
     if request.method == "POST":
-        input_value = request.POST.get('input_value')
-        print(input_value)
+        input_value = request.POST.get('input-value')
+        chosen_categories = [c['name'] for c in categories if request.POST.get('C-'+c['name'])]
+        meals = meals.filter(category_id__in=chosen_categories)
+        if request.POST.get('only-vegan'):
+            meals = meals.filter(is_vegan=True)
         meals = meal_search(meals, input_value)
         is_authenticated = request.user.is_authenticated
         meals_html = loader.render_to_string('meals.html', {'meals': meals,

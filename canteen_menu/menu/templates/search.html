@@ -4,7 +4,7 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col">
-                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" id="input_value">
+                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" name="input-value">
                 </div>
             </div>
             <div class="dropdown">
@@ -17,14 +17,14 @@
                       <div class="col">
                          <div class="form-check">
                              {% for x in categories %}
-                                 <input class="form-check-input" type="checkbox" id="C {{ x.name }}" name="option1" value="something" checked>
+                                 <input class="form-check-input" type="checkbox" name="C-{{ x.name }}" value="something" checked>
                                  <label class="form-check-label">{{ x.name }}</label>
                                  <br/>
                              {% endfor %}
                          </div>
                          <div class="form-check mt-2">
-                             <input class="form-check-input" type="checkbox" id="is-vegan" name="option1" value="something">
-                             <label class="form-check-label">Vegan</label>
+                             <input class="form-check-input" type="checkbox" name="only-vegan" value="something">
+                             <label class="form-check-label">Tik Vegan</label>
                          </div>
                       </div>
                       <div class="col">
@@ -39,18 +39,21 @@
 
 </div>
 <script>
-    $(document).ready(function() {
-        $('#input_value').on('input', function() {
-            // Get the value of the text input
-            var inputValue = $(this).val();
+    $(document).ready(function () {
+        // Change event for any form element
+        $('form').on('change input', 'input, select, textarea', function () {
+            // Get the form data
+            var formData = new FormData($('form')[0]);
 
             // Send a POST request to your Django view
             $.ajax({
-                type: 'POST',
                 url: '/',
-                data: {
-                    'input_value': inputValue,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}', // Include CSRF token for security
+                type: 'POST',
+                processData: false,  // Prevent jQuery from processing the data
+                contentType: false,
+                data: formData,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
                 },
                 success: function(data) {
                     // Handle the response from the server if needed
