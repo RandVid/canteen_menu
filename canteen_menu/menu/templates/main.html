@@ -10,4 +10,5 @@
   <h1>Patiekalai</h1>
   {% include "search.html" with categories=categories %}
   <div id="meals-container1">{% include "meals.html" with meals=meals is_authenticated=user.is_authenticated %}</div>
+  <div id="meals-container2"></div>
 {% endblock %}

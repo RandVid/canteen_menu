@@ -1,3 +1,4 @@
+from django.db.models import Value, IntegerField
 from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -17,17 +18,28 @@ def main(request):
     categories = MealCategory.objects.all().values()
     if request.method == "POST":
         input_value = request.POST.get('input-value')
-        chosen_categories = [c['name'] for c in categories if request.POST.get('C-'+c['name'])]
+        chosen_categories = [c['name'] for c in categories if request.POST.get('C-' + c['name'])]
         meals = meals.filter(category_id__in=chosen_categories)
+        possible_meals_html = ''
+        is_authenticated = request.user.is_authenticated
         if request.POST.get('only-vegan'):
             meals = meals.filter(is_vegan=True)
+        if len(input_value) > 1:
+            # print(typo_tolerant_search(input_value, meals, tolerance=len(input_value) - 1))
+            possible_meals = typo_tolerant_search(input_value, meals, tolerance=len(input_value) - 1)
+            if len(possible_meals) > 0:
+                possible_meals_html = '<h2 style="text-align: center;"> Galima jūs ieškote </h2>\n'
+                possible_meals_html += loader.render_to_string('meals.html', {'meals': possible_meals,
+                                                                              'is_authenticated': is_authenticated,
+                                                                              'favorite_meals': favorite,
+                                                                              'csrf_token': get_token(request)})
+            # print(possible_meals_html)
         meals = meal_search(meals, input_value)
-        is_authenticated = request.user.is_authenticated
         meals_html = loader.render_to_string('meals.html', {'meals': meals,
                                                             'is_authenticated': is_authenticated,
                                                             'favorite_meals': favorite,
                                                             'csrf_token': get_token(request)})
-        return JsonResponse({'status': 'success', 'meals1': meals_html})
+        return JsonResponse({'status': 'success', 'meals1': meals_html, 'meals2': possible_meals_html})
 
     template = loader.get_template('main.html')
     context = {
@@ -112,20 +124,31 @@ def levenshtein_distance(str1, str2):
             elif str1[i - 1] == str2[j - 1]:
                 dp[i][j] = dp[i - 1][j - 1]
             else:
-                dp[i][j] = 1 + min(dp[i - 1][j],      # deletion
-                                  dp[i][j - 1],      # insertion
-                                  dp[i - 1][j - 1])  # substitution
+                dp[i][j] = 1 + min(dp[i - 1][j],  # deletion
+                                   dp[i][j - 1],  # insertion
+                                   dp[i - 1][j - 1])  # substitution
 
     return dp[m][n]
 
 
-def typo_tolerant_search(query, word_list, tolerance=2):
+def typo_tolerant_search(query, meal_set, tolerance=2):
     results = []
+    names = list(meal_set.values_list('name', flat=True))
 
-    for word in word_list:
-        distance = levenshtein_distance(unidecode(query.lower()), unidecode(word.lower())) - len(word) + len(query)
-        if distance <= tolerance:
-            results.append((word, distance))
-
-    results.sort(key=lambda x: x[1])  # Sort results by distance
-    return results
+    for name in names:
+        if unidecode(query.lower()) not in unidecode(name.lower()):
+            distance = (levenshtein_distance(unidecode(query.lower()), unidecode(name.lower()))
+                        - len(name) + len(query))
+            if distance <= tolerance:
+                results.append((name, distance))
+    names_results = [i[0] for i in results]
+    meal_set = meal_set.filter(name__in=names_results).annotate(distance=Value(0, output_field=IntegerField()))
+    print(meal_set)
+    for i in range(len(results)):
+        print(i)
+        meal_set[i]['distance'] = results[i][1]
+    # results.sort(key=lambda x: x[1])  # Sort results by distance
+    # print(results)
+    # print(meal_set)
+    meal_set.order_by('-distance')
+    return meal_set
