@@ -1,4 +1,4 @@
-from django.db.models import Value, IntegerField
+from django.db.models import Value, IntegerField, F, When, Case
 from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -99,6 +99,12 @@ def update_favorite(request, meal_id):
         return JsonResponse({'status': 'error'})
 
 
+def staff_panel(request):
+    template = loader.get_template('staff_panel.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
 def meal_search(meal_set, query):
     names = list(meal_set.values_list('name', flat=True))
     good_names = accent_insensitive_search(names, query)
@@ -142,13 +148,11 @@ def typo_tolerant_search(query, meal_set, tolerance=2):
             if distance <= tolerance:
                 results.append((name, distance))
     names_results = [i[0] for i in results]
-    meal_set = meal_set.filter(name__in=names_results).annotate(distance=Value(0, output_field=IntegerField()))
-    print(meal_set)
-    for i in range(len(results)):
-        print(i)
-        meal_set[i]['distance'] = results[i][1]
+    case_statements = [When(name=name, then=Value(distance, output_field=IntegerField())) for name, distance in results]
+    meal_set = meal_set.filter(name__in=names_results).annotate(distance=Case(*case_statements, default=Value(0, output_field=IntegerField())))
+    print(meal_set.values_list('distance', flat=True))
     # results.sort(key=lambda x: x[1])  # Sort results by distance
     # print(results)
-    # print(meal_set)
-    meal_set.order_by('-distance')
+    meal_set = meal_set.order_by('distance')
+    print(meal_set)
     return meal_set

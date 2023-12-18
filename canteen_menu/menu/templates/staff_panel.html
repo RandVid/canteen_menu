@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if user.is_authenticated and user.is_staff %}
+        <!-- The user is authenticated and is an admin -->
+        <p>Welcome, admin!</p>
+    {% else %}
+        <!-- The user is not an admin or is not authenticated -->
+        <p>You are not an admin.</p>
+    {% endif %}
+</body>
+</html>

@@ -26,39 +26,58 @@
     </script>
 
     <div class="container mt-4">
-      <div class="row d-flex align-items-center justify-content-center">
+    <div class="row d-flex align-items-center justify-content-center">
         {% for x in meals %}
-          <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card {% if text_color %} {{ text_color }} {% endif %}" style="height: 300px;">
-              <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
-              <div class="card-header">
-                <h2 class="card-title">{{ x.name }}</h2>
-              </div>
-              <div class="card-body pt-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span class="badge bg-primary">{{ x.category_id }}</span>
-                {% if x.is_vegan %}<span class="badge bg-success">Vegan</span>{% endif %}
-<!--                <span class="badge"> </span>-->
-                <div style="overflow: hidden; text-overflow: ellipsis;"><p class="card-text" >{{ x.description }}</p></div>
-                <div class="row align-items-center d-flex" style="position: absolute; width: 100%; bottom: 10px;">
-                {% if is_authenticated %}
-                  <div class="col-7">
-                    <h2 class="card-text">{{ x.price }}€</h2>
-                  </div>
-                  <div class="col-1 text-right">
-                    <input type="checkbox" class="task-checkbox" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
-                  </div>
-                {% else %}
-                  <div class="col-8">
-                    <h2 class="card-text">{{ x.price }}€</h2>
-                  </div>
-                {% endif %}
-                <div class="col-4 text-right">
-                  <a href="details/{{ x.id }}" class="btn {% if button_color %} {{ button_color }} {% endif %} btn-primary">See More</a>
+            <div class="col-12 col-lg-6 col-xl-4 mb-4">
+                <div class="card {% if text_color %} {{ text_color }} {% endif %}" style="height: 360px; position: relative;">
+                    <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
+                    <div class="card-header">
+                        <h2 class="card-title">{{ x.name }}</h2>
+                    </div>
+                    <div class="card-body pt-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <span class="badge bg-primary">{{ x.category_id }}</span>
+                        {% if x.is_vegan %}<span class="badge bg-success">Vegan</span>{% endif %}
+                        <!-- <span class="badge"> </span> -->
+                        <!-- <div style="overflow: hidden; text-overflow: ellipsis;"><p class="card-text">{{ x.description }}</p></div> -->
+                        <table class="table table-striped mt-2">
+                            <tbody>
+                                <tr>
+                                    <td><b>Kalorijos (Kcal)</b></td>
+                                    <td>{{ x.calories }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Masė (g)</b></td>
+                                    <td>{{ x.mass }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Baltymai (g)</b></td>
+                                    <td>{{ x.proteins }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Riebalai (g)</b></td>
+                                    <td>{{ x.fats }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Angliavandeniai (g)</b></td>
+                                    <td>{{ x.carbohydrates }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between" style="position: absolute; width: calc(100% - 32px); box-sizing: border-box; bottom: 10px;">
+                            <div>
+                                <h2 class="card-text">{{ x.price }}€</h2>
+                            </div>
+                            <div class="text-right">
+                                {% if is_authenticated %}
+                                    <input type="checkbox" class="task-checkbox me-2" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
+                                {% endif %}
+                                <a href="details/{{ x.id }}" class="btn {% if button_color %} {{ button_color }} {% endif %} btn-primary">See More</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              </div>
             </div>
-          </div>
         {% endfor %}
-      </div>
     </div>
+</div>
+
