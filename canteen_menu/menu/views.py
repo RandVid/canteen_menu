@@ -14,6 +14,7 @@ from unidecode import unidecode
 # Create your views here.
 def main(request):
     meals = Meal.objects.filter(in_menu=True).values()
+    print(meals)
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
     categories = MealCategory.objects.all().values()
     if request.method == "POST":
