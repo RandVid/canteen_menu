@@ -30,10 +30,16 @@
                           <div class="col">
                               <div class="row d-flex align-items-center justify-content-center">
 <!--                              <input type="range" name="pieces" id="inputPieces" multiple value="15,90" min="5" max="235" unit=" Pcs." style="width: 50px">-->
-                                  <div class="search-range">
-                                      <input type="range" class="form-range w-50" id="customRange1">
-                                      <input type="range" class="form-range w-50" id="customRange2" style="background: none;">
-                                  </div>
+<!--                                  <div class="search-range">-->
+<!--                                      <input type="range" class="form-range w-50 range1" id="customRange1" min="0" max="200">-->
+<!--                                      <input type="range" class="form-range w-50 range2" id="customRange2" min="0" max="200" style="background: none;">-->
+<!--                                      <p class="range-info"></p>-->
+<!--                                  </div>-->
+<!--                                  <div class="search-range">-->
+<!--                                      <input type="range" class="form-range w-50 range1" id="customRange1">-->
+<!--                                      <input type="range" class="form-range w-50 range2" id="customRange2" style="background: none;">-->
+<!--                                      <p class="range-info"></p>-->
+<!--                                  </div>-->
                               </div>
                           </div>
                         </div>
@@ -45,14 +51,76 @@
 </div>
 
 <style>
-    .search-range > .form-range {
-        position: absolute;
-        top: 0px;
-    }
+    .search-range {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 0;
+}
+
+.range1,
+.range2 {
+    flex-grow: 1;
+}
+
+.range-info {
+    margin-top: 10px;
+}
 </style>
 
 <script>
     $(document).ready(function () {
+        // For each search-range container
+        $('.search-range').each(function () {
+            // Get the range inputs within this container
+            var range1 = $(this).find('.range1');
+            var range2 = $(this).find('.range2');
+
+            var rangeInfo = $(this).find('.range-info');
+
+            // Update the range info text
+            function updateRangeInfo() {
+                var minValue = range1.val();
+                var maxValue = range2.val();
+                rangeInfo.text('Min: ' + minValue + ' | Max: ' + maxValue);
+            }
+            updateRangeInfo();
+
+            function updateWidth() {
+                var rangeWidth1 = (range1.attr('max')) / (range2.attr('max')) * 100;
+                var rangeWidth2 = 100 - (range2.attr('min')) / (range2.attr('max')) * 100;
+
+                range1.css('width', rangeWidth1 + '%');
+                range2.css('width', rangeWidth2 + '%');
+                console.log(range1.attr('max'));
+                console.log(range2.attr('min'));
+            }
+
+            // When the value of range1 changes
+            range1.on('input', function () {
+                // Set the max value of range1 to the value of range2
+                range1.attr('max', range2.val());
+                range2.attr('min', range1.val());
+                updateRangeInfo();
+                updateWidth();
+            });
+
+            // When the value of range2 changes
+            range2.on('input', function () {
+                // Set the min value of range2 to the value of range1
+                range2.attr('min', range1.val());
+                range1.attr('max', range2.val());
+                updateRangeInfo();
+                updateWidth();
+            });
+
+            // Adjust the width based on the min and max values
+            $(window).on('resize', function () {
+            });
+
+            // Trigger resize event to set initial widths
+            $(window).trigger('resize');
+        });
+
         // Change event for any form element
         $('form').on('change input', 'input, select, textarea', function () {
             // Get the form data
