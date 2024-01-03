@@ -1,11 +1,12 @@
-from django.db.models import Value, IntegerField, F, When, Case
+from django.contrib import messages
+from django.db.models import Value, IntegerField, F, When, Case, Q
 from django.middleware.csrf import get_token
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
 from .models import Meal, Comment, FavoriteMeal, MealCategory
-from .forms import CommentForm
+from .forms import CommentForm, MealForm
 from .templatetags.custom_filters import get_category_name
 
 from unidecode import unidecode
@@ -14,17 +15,13 @@ from unidecode import unidecode
 # Create your views here.
 def main(request):
     meals = Meal.objects.filter(in_menu=True).values()
-    print(meals)
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
     categories = MealCategory.objects.all().values()
     if request.method == "POST":
         input_value = request.POST.get('input-value')
-        chosen_categories = [c['name'] for c in categories if request.POST.get('C-' + c['name'])]
-        meals = meals.filter(category_id__in=chosen_categories)
+        meals = meal_sort(request, meals, categories=categories)
         possible_meals_html = ''
         is_authenticated = request.user.is_authenticated
-        if request.POST.get('only-vegan'):
-            meals = meals.filter(is_vegan=True)
         if len(input_value) > 1:
             # print(typo_tolerant_search(input_value, meals, tolerance=len(input_value) - 1))
             possible_meals = typo_tolerant_search(input_value, meals, tolerance=len(input_value) - 1)
@@ -76,13 +73,36 @@ def details(request, id):
 
 def favorite_meals(request):
     favorite = list(FavoriteMeal.objects.filter(username=request.user).values_list('meal_id', flat=True))
+    meals = Meal.objects.filter(id__in=favorite)
+    template = loader.get_template('favorite_meals.html')
+    categories = MealCategory.objects.all().values()
+
+    if request.method == "POST":
+        meals = meal_sort(request, meals, categories=categories)
+        is_authenticated = request.user.is_authenticated
+            # print(possible_meals_html)
+        input_value = request.POST.get('input-value')
+        meals = meal_search(meals, input_value)
+        in_menu = meals.filter(in_menu=True)
+        not_in_menu = meals.filter(in_menu=False)
+
+        in_menu_html = loader.render_to_string('meals.html', {'meals': in_menu,
+                                                            'is_authenticated': is_authenticated,
+                                                            'favorite_meals': favorite,
+                                                            'csrf_token': get_token(request)})
+        not_in_menu_html = loader.render_to_string('meals.html', {'meals': not_in_menu,
+                                                              'is_authenticated': is_authenticated,
+                                                              'favorite_meals': favorite,
+                                                              'csrf_token': get_token(request)})
+        return JsonResponse({'status': 'success', 'meals1': in_menu_html, 'meals2': not_in_menu_html})
+
     in_menu = Meal.objects.filter(in_menu=True, id__in=favorite).values()
     not_in_menu = Meal.objects.filter(in_menu=False, id__in=favorite).values()
-    template = loader.get_template('favorite_meals.html')
     context = {
         'favorite_meals': favorite,
         'favorite_in_menu': in_menu,
-        'favorite_not_in_menu': not_in_menu
+        'favorite_not_in_menu': not_in_menu,
+        'categories': categories
     }
     return HttpResponse(template.render(context, request))
 
@@ -100,10 +120,69 @@ def update_favorite(request, meal_id):
         return JsonResponse({'status': 'error'})
 
 
-def staff_panel(request):
-    template = loader.get_template('staff_panel.html')
-    context = {}
+def update_menu(request, meal_id):
+    if request.method == 'POST' and request.user.is_staff:
+        meal = get_object_or_404(Meal, id=meal_id)
+        meal.in_menu = not meal.in_menu
+        meal.save()
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error'})
+
+
+def delete_meal(request, meal_id):
+    if request.method == 'POST' and request.user.is_staff:
+        meal = get_object_or_404(Meal, id=meal_id)
+        meal.delete()
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error'})
+
+
+def staff_meals(request):
+    meals = Meal.objects.all().values()
+    template = loader.get_template('staff_meals.html')
+    context = {
+        'meals': meals
+    }
     return HttpResponse(template.render(context, request))
+
+
+def add_meal(request):
+    if request.user.is_staff:
+        if request.method == "POST":
+            form = MealForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect("staff")
+            messages.error(request, "Unsuccessful registration. Invalid information.")
+        form = MealForm()
+        template = loader.get_template('update_meal.html')
+        context = {
+            'form': form
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        return JsonResponse({'status': 'error'})
+
+
+def update_meal(request, meal_id):
+    meal = Meal.objects.get(id=meal_id)
+    if request.user.is_staff:
+        if request.method == "POST":
+            form = MealForm(request.POST, instance=meal)
+            if form.is_valid():
+                form.save()
+                return redirect("staff")
+            messages.error(request, "Unsuccessful registration. Invalid information.")
+        form = MealForm(instance=meal)
+        template = loader.get_template('update_meal.html')
+        context = {
+            'form': form
+        }
+        return HttpResponse(template.render(context, request))
+    else:
+        return JsonResponse({'status': 'error'})
 
 
 def meal_search(meal_set, query):
@@ -150,10 +229,23 @@ def typo_tolerant_search(query, meal_set, tolerance=2):
                 results.append((name, distance))
     names_results = [i[0] for i in results]
     case_statements = [When(name=name, then=Value(distance, output_field=IntegerField())) for name, distance in results]
-    meal_set = meal_set.filter(name__in=names_results).annotate(distance=Case(*case_statements, default=Value(0, output_field=IntegerField())))
+    meal_set = meal_set.filter(name__in=names_results).annotate(
+        distance=Case(*case_statements, default=Value(0, output_field=IntegerField()))
+    )
     print(meal_set.values_list('distance', flat=True))
     # results.sort(key=lambda x: x[1])  # Sort results by distance
     # print(results)
     meal_set = meal_set.order_by('distance')
     print(meal_set)
+    return meal_set
+
+
+def meal_sort(request, meal_set, categories=MealCategory.objects.all().values()):
+    chosen_categories = [c['name'] for c in categories if request.POST.get('C-' + c['name'])]
+    if request.POST.get('only-vegan'):
+        meal_set = meal_set.filter(is_vegan=True)
+    meal_set = meal_set.filter(category_id__in=chosen_categories)
+    meal_set = meal_set.filter(Q(calories__gte=request.POST.get('cal-min'), calories__lte=request.POST.get('cal-max')) |
+                               Q(calories=None))
+    # print(meal_set)
     return meal_set

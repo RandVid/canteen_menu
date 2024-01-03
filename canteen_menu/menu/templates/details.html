@@ -8,30 +8,31 @@
 
 {% block content %}
     {% load static %}
-    <h1>{{ meal.name }}</h1>
-    <b>Aprašymas <br/></b>
-    <p>{{ meal.description }}</p>
-    <b>Kaina: {{ meal.price }}€</b>
-    <h2>Komentarai</h2>
-    {% if user.is_authenticated %}
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-          {{ form|crispy }}
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Submit</button>
-    </form>
-    {% else %}
-    <p>Užsiregistruokite, kad palikti komentarą</p>
-    {% endif %}
-    {% for comment in comments %}
-        <div class="card mt-2">
-          <div class="card-header"><b>{{ comment.username }}</b></div>
-          <div class="card-body">{{ comment.description }}</div>
-          <div class="card-footer">{{ comment.created_at }}</div>
-        </div>
-    {% empty %}
-        <li>No comments yet.</li>
-    {% endfor %}
-
+    <div class="container mt-4">
+        <h1>{{ meal.name }}</h1>
+        <b>Aprašymas <br/></b>
+        <p>{{ meal.description }}</p>
+        <b>Kaina: {{ meal.price }}€</b>
+        <h2>Komentarai</h2>
+        {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ form|crispy }}
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+        </form>
+        {% else %}
+        <p>Užsiregistruokite, kad palikti komentarą</p>
+        {% endif %}
+        {% for comment in comments %}
+            <div class="card mt-2">
+              <div class="card-header"><b>{{ comment.username }}</b></div>
+              <div class="card-body">{{ comment.description }}</div>
+              <div class="card-footer">{{ comment.created_at }}</div>
+            </div>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </div>
 {% endblock %}

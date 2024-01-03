@@ -1,31 +1,5 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $('.task-checkbox').on('change', function () {
-          var taskId = $(this).data('task-id');
-          $.ajax({
-            url: '/favorite/update/' + taskId + '/',
-            type: 'POST',
-            dataType: 'json',
-            beforeSend: function (xhr) {
-              xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-            },
-            success: function (data) {
-              if (data.status === 'success') {
-                console.log('Favorite meal updated');
-              } else {
-                console.error('Error updating task');
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX request failed with error: ' + error);
-            }
-          });
-        });
-      });
-    </script>
-
-    <div class="container mt-4">
+<div class="container mt-4">
     <div class="row d-flex align-items-center justify-content-center">
         {% for x in meals %}
             <div class="col-12 col-lg-6 col-xl-4 mb-4">
@@ -69,7 +43,7 @@
                             </div>
                             <div class="text-right">
                                 {% if is_authenticated %}
-                                    <input type="checkbox" class="task-checkbox me-2" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
+                                    <input type="checkbox" class="task-checkbox me-3 star text-warning" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
                                 {% endif %}
                                 <a href="details/{{ x.id }}" class="btn {% if button_color %} {{ button_color }} {% endif %} btn-primary">See More</a>
                             </div>
@@ -79,5 +53,51 @@
             </div>
         {% endfor %}
     </div>
+
+    <style>
+        .star {
+            margin-top: 0px;
+            visibility:hidden;
+            font-size:30px;
+            cursor:pointer;
+        }
+        .star:before {
+           content: "\2606";
+           position: absolute;
+           top: -5px;
+           visibility:visible;
+        }
+        .star:checked:before {
+           content: "\2605";
+           position: absolute;
+           top: -5px;
+        }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        $('.task-checkbox').on('change', function () {
+          var taskId = $(this).data('task-id');
+          $.ajax({
+            url: '/favorite/update/' + taskId + '/',
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+            },
+            success: function (data) {
+              if (data.status === 'success') {
+                console.log('Favorite meal updated');
+              } else {
+                console.error('Error updating task');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX request failed with error: ' + error);
+            }
+          });
+        });
+      });
+    </script>
 </div>
 

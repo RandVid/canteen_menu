@@ -11,3 +11,10 @@ class CommentForm(forms.ModelForm):
 class SearchForm(forms.Form):
     class Meta:
         pass
+
+
+class MealForm(forms.ModelForm):
+
+    class Meta:
+        model = Meal
+        exclude = ["id",]

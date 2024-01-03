@@ -1,0 +1,103 @@
+{% extends "staff_master.html" %}
+
+{% block title %}
+  <title>Meniu</title>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+    {% if user.is_authenticated and user.is_staff %}
+    <!-- The user is authenticated and is an admin -->
+    <div class="container mt-4">
+        <div class="row d-flex align-items-center justify-content-center">
+            <table class="table">
+                <a type="button" class="btn btn-success" href="staff/meal/add/">Add</a>
+                <thead>
+                <tr>
+                    <th>Meal</th>
+                    <th>Is in menu?</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Mass, g</th>
+                    <th>Proteins, g</th>
+                    <th>Fats, g</th>
+                    <th>Carbohydrates, g</th>
+                    <th>Calories, kcal</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for x in meals %}
+                <tr>
+                    <td>{{ x.name }}</td>
+                    <td><input type="checkbox" class="task-checkbox me-2" data-task-id="{{ x.id }}" {% if x.in_menu %}checked{% endif %}></td>
+                    <td>{{ x.category_id }}</td>
+                    <td>{{ x.price }}</td>
+                    <td>{{ x.mass }}</td>
+                    <td>{{ x.proteins }}</td>
+                    <td>{{ x.fats }}</td>
+                    <td>{{ x.carbohydrates }}</td>
+                    <td>{{ x.calories }}</td>
+                    <td>
+                        <a href="#" class="delete-meal" data-id="{{ x.id }}">
+                            <i class="bi bi-trash-fill text-danger fw-bold"></i>
+                        </a>
+                        <a href="staff/meal/update/{{ x.id }}">
+                            <i class="bi bi-pen-fill text-primary fw-bold"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <!-- The user is not an admin or is not authenticated -->
+    <p>Пашоу нахой</p>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+               $('.task-checkbox').on('change', function () {
+                 var taskId = $(this).data('task-id');
+                 var isChecked = $(this).prop('checked');
+                 $.ajax({
+                   url: 'staff/menu/update/' + taskId + '/',
+                   type: 'POST',
+                   dataType: 'json',
+                   data: {
+                     csrfmiddlewaretoken: '{{ csrf_token }}',
+                     isChecked: isChecked // Include the checkbox status in the data
+                   },
+                   success: function (data) {
+                     if (data.status === 'success') {
+                       console.log('Favorite meal updated');
+                     } else {
+                       console.error('Error updating task');
+                     }
+                   },
+                   error: function (xhr, status, error) {
+                     console.error('AJAX request failed with error: ' + error);
+                   }
+                 });
+               });
+               $('.delete-meal').click(function() {
+                   var id = $(this).data('id');
+                   $.ajax({
+                       url: '/staff/meal/delete/' + id + '/',
+                       type: 'POST',
+                       data: {
+                           csrfmiddlewaretoken: '{{ csrf_token }}'
+                       },
+                       success: function(data) {
+                           console.log('Success:', data);
+                           location.reload();
+                       },
+                       error: function(error) {
+                           console.error('Error:', error);
+                       }
+                   });
+               });
+             });
+    </script>
+{% endblock %}
