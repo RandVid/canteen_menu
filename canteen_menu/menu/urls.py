@@ -5,6 +5,7 @@ from .staff_views import *
 urlpatterns = [
     path('', main, name='main'),
     path('details/<int:id>', details, name='details'),
+    path('comment/delete/<int:comment_id>', delete_comment),
     path('favorite/update/<int:meal_id>/', update_favorite),
     path('favorite', favorite_meals),
     path('staff', staff_meals, name='staff'),

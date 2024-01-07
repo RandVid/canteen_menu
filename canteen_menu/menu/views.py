@@ -112,3 +112,13 @@ def update_favorite(request, meal_id):
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
+
+
+def delete_comment(request, comment_id):
+    if request.method == 'POST':
+        print(Comment.objects.all().values())
+        comment = Comment.objects.filter(id=comment_id)
+        if request.user.username == comment.username or request.user.is_superuser:
+            comment.delete()
+            return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})

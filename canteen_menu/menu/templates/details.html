@@ -8,6 +8,7 @@
 
 {% block content %}
     {% load static %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <div class="container mt-4">
         <h1>{{ meal.name }}</h1>
         <b>Aprašymas <br/></b>
@@ -27,12 +28,39 @@
         {% endif %}
         {% for comment in comments %}
             <div class="card mt-2">
-              <div class="card-header"><b>{{ comment.username }}</b></div>
+              <div class="card-header"><b>{{ comment.username }} </b>
+                  {% if user.is_superuser or comment.username == user.username %}
+                  <a href="#" class="delete-comment" data-id="{{ comment.id }}">
+                      <i class="bi bi-trash-fill text-danger fw-bold"></i>
+                  </a>
+                  {% endif %}
+              </div>
               <div class="card-body">{{ comment.description }}</div>
               <div class="card-footer">{{ comment.created_at }}</div>
             </div>
         {% empty %}
-            <li>No comments yet.</li>
+            No comments yet.
         {% endfor %}
+        <script>
+            $(document).ready(function () {
+                $('.delete-comment').click(function() {
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url: '/comment/delete/' + id + '/',
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function(data) {
+                            console.log('Success:', data);
+                            location.reload();
+                        },
+                        error: function(error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                });
+            });
+        </script>
     </div>
 {% endblock %}
