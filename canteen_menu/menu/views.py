@@ -115,6 +115,7 @@ def update_favorite(request, meal_id):
 
 
 def delete_comment(request, comment_id):
+    print('aboba')
     if request.method == 'POST':
         print(Comment.objects.all().values())
         comment = Comment.objects.filter(id=comment_id)
