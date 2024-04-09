@@ -2,7 +2,7 @@
 <div class="container mt-4">
     <div class="row d-flex align-items-center justify-content-center">
         {% for x in meals %}
-            <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="col-12 col-md-6 col-xl-4 mb-4">
                 <div class="card {% if text_color %} {{ text_color }} {% endif %}" style="height: 360px; position: relative;">
                     <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
                     <div class="card-header">
@@ -16,23 +16,23 @@
                         <table class="table table-striped mt-2">
                             <tbody>
                                 <tr>
-                                    <td><b>Kalorijos (Kcal)</b></td>
+                                    <td><b>Calories (Kcal)</b></td>
                                     <td>{{ x.calories }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Masė (g)</b></td>
+                                    <td><b>Mass (g)</b></td>
                                     <td>{{ x.mass }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Baltymai (g)</b></td>
+                                    <td><b>Protein (g)</b></td>
                                     <td>{{ x.proteins }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Riebalai (g)</b></td>
+                                    <td><b>Fats (g)</b></td>
                                     <td>{{ x.fats }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Angliavandeniai (g)</b></td>
+                                    <td><b>Carbohydrates (g)</b></td>
                                     <td>{{ x.carbohydrates }}</td>
                                 </tr>
                             </tbody>

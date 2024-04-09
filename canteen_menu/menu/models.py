@@ -15,11 +15,11 @@ class Meal(models.Model):
     price = models.FloatField()
     in_menu = models.BooleanField()
     is_vegan = models.BooleanField()
-    calories = models.IntegerField(null=True, blank=True)
-    proteins = models.IntegerField(null=True, blank=True)
-    fats = models.IntegerField(null=True, blank=True)
-    carbohydrates = models.IntegerField(null=True, blank=True)
-    mass = models.IntegerField(null=True, blank=True)
+    calories = models.FloatField(null=True, blank=True)
+    proteins = models.FloatField(null=True, blank=True)
+    fats = models.FloatField(null=True, blank=True)
+    carbohydrates = models.FloatField(null=True, blank=True)
+    mass = models.FloatField(null=True, blank=True)
     category = models.ForeignKey(MealCategory, on_delete=models.CASCADE, to_field="name", null=True)
 
     def __str__(self):

@@ -7,15 +7,15 @@
 
 {% block content %}
     {% load static %}
-    <h1>Mėgstamiausi Patiekalai</h1>
+    <h1>Favorite meals</h1>
     {% include "search.html" with categories=categories %}
 
-    {% if favorite_in_menu %}<h2 class="text-center text-success">Yra Meniu</h2>{% endif %}
+    {% if favorite_in_menu %}<h2 class="text-center text-success">In menu</h2>{% endif %}
     <div id="meals-container1">
         {% include "meals.html" with meals=favorite_in_menu is_authenticated=user.is_authenticated %}
     </div>
 
-    {% if favorite_not_in_menu %}<h2  class="text-center text-danger">Nėra Meniu</h2>{% endif %}
+    {% if favorite_not_in_menu %}<h2  class="text-center text-danger">Not in menu</h2>{% endif %}
     <div id="meals-container2">
         {% include "meals.html" with meals=favorite_not_in_menu button_color='btn-secondary' text_color='text-secondary' is_authenticated=user.is_authenticated %}
     </div>

@@ -4,12 +4,12 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col">
-                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" name="input-value">
+                  <input type="text" class="form-control form-control-lg" placeholder="Search" name="input-value">
                 </div>
             </div>
             <div class="dropdown">
                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm py-0" data-bs-toggle="dropdown">
-                  Daugiau
+                  More
                 </button>
                 <div class="dropdown-menu w-100">
                   <div class="row d-flex align-items-center justify-content-center">
@@ -24,7 +24,7 @@
                              </div>
                              <div class="form-check mt-2">
                                  <input class="form-check-input" type="checkbox" name="only-vegan" value="something">
-                                 <label class="form-check-label">Tik Vegan</label>
+                                 <label class="form-check-label">Only Vegan</label>
                              </div>
                           </div>
                           <div class="col">
@@ -32,19 +32,19 @@
                                   <div class="range">
                                       <div class="col">
                                        <div class="range-price mt-1 mb-2">
-                                         <label>Kalorijos: </label>
-                                         <input type="number" name="min" class="input-sm me-1" value="300" readonly>
+                                         <label>Price: </label>
+                                         <input type="number" name="min" class="input-sm me-1" value="0" readonly>
                                          <label for="max">-</label>
-                                         <input type="number" name="max" class="input-sm" value="700" readonly>
+                                         <input type="number" name="max" class="input-sm" value="1000" readonly>
                                        </div>
                                       </div>
                                       <div class="col">
                                        <div class="range-slider">
-                                         <span class="range-selected"></span>
+                                         <span class="range-selected" style="left: 0%; right: 0%;"></span>
                                        </div>
                                        <div class="range-input">
-                                         <input type="range" name="cal-min" class="min" min="0" max="1000"   value="300" step="10">
-                                         <input type="range" name="cal-max" class="max" min="0" max="1000" value="700" step="10">
+                                         <input type="range" name="price-min" class="min" min="0" max="10"   value="0" step="0.1">
+                                         <input type="range" name="price-max" class="max" min="0" max="10" value="10" step="0.1">
                                        </div>
                                       </div>
                                      </div>

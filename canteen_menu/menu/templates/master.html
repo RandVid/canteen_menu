@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
   <style>
     @media (max-width: 767px) {
       .card-columns {
@@ -148,6 +147,11 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+              <li>
+                <a class="nav-link active h1" href="/admin">Admin</a>
+              </li>
+            {% endif %}
             {% if user.is_staff %}
               <li>
                 <a class="nav-link active h1" href="/staff">Go to staff</a>

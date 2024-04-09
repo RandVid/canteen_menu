@@ -55,7 +55,7 @@ def meal_sort(request, meal_set, categories=MealCategory.objects.all().values())
     if request.POST.get('only-vegan'):
         meal_set = meal_set.filter(is_vegan=True)
     meal_set = meal_set.filter(category_id__in=chosen_categories)
-    meal_set = meal_set.filter(Q(calories__gte=request.POST.get('cal-min'), calories__lte=request.POST.get('cal-max')) |
+    meal_set = meal_set.filter(Q(price__gte=request.POST.get('price-min'), price__lte=request.POST.get('price-max')) |
                                Q(calories=None))
     # print(meal_set)
     return meal_set

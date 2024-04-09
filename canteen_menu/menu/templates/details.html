@@ -11,10 +11,35 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <div class="container mt-4">
         <h1>{{ meal.name }}</h1>
-        <b>Aprašymas <br/></b>
+        <h3>Description <br/></h3>
         <p>{{ meal.description }}</p>
-        <b>Kaina: {{ meal.price }}€</b>
-        <h2>Komentarai</h2>
+        <h3>Nutrition</h3>
+        <table class="table table-hover mt-2" style="display: inline-block;">
+                            <tbody>
+                                <tr>
+                                    <td><b>Calories (Kcal)</b></td>
+                                    <td>{{ meal.calories }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Mass (g)</b></td>
+                                    <td>{{ meal.mass }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Protein (g)</b></td>
+                                    <td>{{ meal.proteins }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Fats (g)</b></td>
+                                    <td>{{ meal.fats }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Carbohydrates (g)</b></td>
+                                    <td>{{ meal.carbohydrates }}</td>
+                                </tr>
+                            </tbody>
+        </table>
+        <h3>Price: {{ meal.price }}€</h3>
+        <h2>Comments</h2>
         {% if user.is_authenticated %}
         <form method="post">
             {% csrf_token %}
@@ -24,7 +49,7 @@
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
         </form>
         {% else %}
-        <p>Užsiregistruokite, kad palikti komentarą</p>
+        <p>Sign in to leave a comment</p>
         {% endif %}
         {% for comment in comments %}
             <div class="card mt-2">
