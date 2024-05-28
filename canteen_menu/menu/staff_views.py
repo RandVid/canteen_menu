@@ -97,7 +97,7 @@ def add_category(request):
             form = CategoryForm(request.POST)
             if form.is_valid():
                 form.save()
-                return redirect("staff/categories/")
+                return redirect("/staff/categories/")
             messages.error(request, "Unsuccessful operation.")
         form = CategoryForm()
         template = loader.get_template('update_category.html')
