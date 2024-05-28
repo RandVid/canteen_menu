@@ -1,0 +1,65 @@
+{% extends "staff_master.html" %}
+
+{% block title %}
+  <title>Staff</title>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+    {% if user.is_authenticated and user.is_staff %}
+    <!-- The user is authenticated and is an admin -->
+    <div class="container mt-4">
+        <div class="row d-flex align-items-center justify-content-center">
+<!--            <h1>Meals</h1>-->
+            <table class="table">
+                <a type="button" class="btn btn-success" href="/staff/categories/add/">Add</a>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for x in categories %}
+                <tr>
+                    <td class="">{{ x.name }}</td>
+                    <td class="text-end">
+                        <a href="#" class="delete-category" data-id="{{ x.id }}">
+                            <i class="bi bi-trash-fill text-danger fw-bold"></i>
+                        </a>
+                        <a href="update/{{ x.id }}">
+                            <i class="bi bi-pen-fill text-primary fw-bold"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <!-- The user is not an admin or is not authenticated -->
+    <p>Page is blocked: you are not a staff</p>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+               $('.delete-category').click(function() {
+                   var id = $(this).data('id');
+                   $.ajax({
+                       url: '/staff/categories/delete/' + id + '/',
+                       type: 'POST',
+                       data: {
+                           csrfmiddlewaretoken: '{{ csrf_token }}'
+                       },
+                       success: function(data) {
+                           console.log('Success:', data);
+                           location.reload();
+                       },
+                       error: function(error) {
+                           console.error('Error:', error);
+                       }
+                   });
+               });
+             });
+    </script>
+{% endblock %}

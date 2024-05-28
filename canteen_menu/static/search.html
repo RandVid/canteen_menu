@@ -1,0 +1,71 @@
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                  <input type="text" class="form-control form-control-lg" placeholder="Ieškoti" name="input-value">
+                </div>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle btn-sm py-0" data-bs-toggle="dropdown">
+                  Daugiau
+                </button>
+                <div class="dropdown-menu w-100">
+                  <div class="row d-flex align-items-center justify-content-center">
+                    <div class="row">
+                      <div class="col">
+                         <div class="form-check">
+                             {% for x in categories %}
+                                 <input class="form-check-input" type="checkbox" name="C-{{ x.name }}" value="something" checked>
+                                 <label class="form-check-label">{{ x.name }}</label>
+                                 <br/>
+                             {% endfor %}
+                         </div>
+                         <div class="form-check mt-2">
+                             <input class="form-check-input" type="checkbox" name="only-vegan" value="something">
+                             <label class="form-check-label">Tik Vegan</label>
+                         </div>
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Ieškoti" id="asaa">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        // Change event for any form element
+        $('form').on('change input', 'input, select, textarea', function () {
+            // Get the form data
+            var formData = new FormData($('form')[0]);
+
+            // Send a POST request to your Django view
+            $.ajax({
+                url: '/',
+                type: 'POST',
+                processData: false,  // Prevent jQuery from processing the data
+                contentType: false,
+                data: formData,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                },
+                success: function(data) {
+                    // Handle the response from the server if needed
+                    $('#meals-container1').html(data.meals1);
+                    $('#meals-container2').html(data.meals2);
+                    $('#meals-container3').html(data.meals3);
+                },
+                error: function(error) {
+                    // Update the content on success
+                    console.log("aboba")
+                }
+            });
+        });
+    });
+</script>

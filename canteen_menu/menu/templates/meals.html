@@ -1,4 +1,79 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        {% for x in meals %}
+            <div class="col-12 col-md-6 col-xl-4 mb-4">
+                <div class="card {% if text_color %} {{ text_color }} {% endif %}" style="height: 360px; position: relative;">
+                    <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
+                    <div class="card-header">
+                        <h2 class="card-title">{{ x.name }}</h2>
+                    </div>
+                    <div class="card-body pt-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <span class="badge bg-primary">{{ x.category_id }}</span>
+                        {% if x.is_vegan %}<span class="badge bg-success">Vegan</span>{% endif %}
+                        <!-- <span class="badge"> </span> -->
+                        <!-- <div style="overflow: hidden; text-overflow: ellipsis;"><p class="card-text">{{ x.description }}</p></div> -->
+                        <table class="table table-striped mt-2">
+                            <tbody>
+                                <tr>
+                                    <td><b>Calories (Kcal)</b></td>
+                                    <td>{{ x.calories }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Mass (g)</b></td>
+                                    <td>{{ x.mass }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Protein (g)</b></td>
+                                    <td>{{ x.proteins }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Fats (g)</b></td>
+                                    <td>{{ x.fats }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Carbohydrates (g)</b></td>
+                                    <td>{{ x.carbohydrates }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between" style="position: absolute; width: calc(100% - 32px); box-sizing: border-box; bottom: 10px;">
+                            <div>
+                                <h2 class="card-text">{{ x.price }}€</h2>
+                            </div>
+                            <div class="text-right">
+                                {% if is_authenticated %}
+                                    <input type="checkbox" class="task-checkbox me-3 star text-warning" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
+                                {% endif %}
+                                <a href="details/{{ x.id }}" class="btn {% if button_color %} {{ button_color }} {% endif %} btn-primary">See More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <style>
+        .star {
+            margin-top: 0px;
+            visibility:hidden;
+            font-size:30px;
+            cursor:pointer;
+        }
+        .star:before {
+           content: "\2606";
+           position: absolute;
+           top: -5px;
+           visibility:visible;
+        }
+        .star:checked:before {
+           content: "\2605";
+           position: absolute;
+           top: -5px;
+        }
+    </style>
+
     <script>
       $(document).ready(function () {
         $('.task-checkbox').on('change', function () {
@@ -12,7 +87,7 @@
             },
             success: function (data) {
               if (data.status === 'success') {
-                console.log('Task updated successfully');
+                console.log('Favorite meal updated');
               } else {
                 console.error('Error updating task');
               }
@@ -24,36 +99,5 @@
         });
       });
     </script>
+</div>
 
-    <div class="container mt-4">
-      <div class="row d-flex align-items-center justify-content-center">
-        {% for x in meals %}
-          <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card {% if text_color %} {{ text_color }} {% endif %}">
-              <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image"> -->
-              <div class="card-body">
-                <h2 class="card-title">{{ x.name }}</h2>
-                <p class="card-text">Some example text.</p>
-                <div class="row align-items-center d-flex">
-                {% if user.is_authenticated %}
-                  <div class="col-7">
-                    <h2 class="card-text">{{ x.price }}€</h2>
-                  </div>
-                  <div class="col-1 text-right">
-                    <input type="checkbox" class="task-checkbox" data-task-id="{{ x.id }}" {% if x.id in favorite_meals %}checked{% endif %}>
-                  </div>
-                {% else %}
-                  <div class="col-8">
-                    <h2 class="card-text">{{ x.price }}€</h2>
-                  </div>
-                {% endif %}
-                <div class="col-4 text-right">
-                  <a href="details/{{ x.id }}" class="btn {% if button_color %} {{ button_color }} {% endif %} btn-primary">See More</a>
-                </div>
-              </div>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
