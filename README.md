@@ -53,13 +53,13 @@ Once the server is running, you can navigate through the menu, mark your favorit
 ## Screenshots
 
 ### Main Menu:
-![Main Menu](path/to/screenshot1.png)
+![Main Menu](readme_assets/menu.png)
 
 ### Meal Details:
-![Meal Details](path/to/screenshot2.png)
+![Meal Details](readme_assets/details.png)
 
 ### Filter and Search:
-![Filter and Search](path/to/screenshot3.png)
+![Filter and Search](readme_assets/search.png)
 
 ## License
 
