@@ -9,6 +9,17 @@ This program was created as part of my IB Computer Science Internal Assessment. 
 - Leave comments and feedback on meals
 - Filter meals by type and dietary preferences
 
+## Screenshots
+
+### Main Menu:
+![Main Menu](readme_assets/menu.png)
+
+### Meal Details:
+![Meal Details](readme_assets/details.png)
+
+### Filter and Search:
+![Filter and Search](readme_assets/search.png)
+
 ## Installation Instructions
 
 ### Download the Project:
@@ -49,18 +60,3 @@ Open your web browser and go to `localhost:8000`. You can log in using the admin
 ## Usage
 
 Once the server is running, you can navigate through the menu, mark your favorite meals, and leave comments. Here are some screenshots of the application in action:
-
-## Screenshots
-
-### Main Menu:
-![Main Menu](readme_assets/menu.png)
-
-### Meal Details:
-![Meal Details](readme_assets/details.png)
-
-### Filter and Search:
-![Filter and Search](readme_assets/search.png)
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
